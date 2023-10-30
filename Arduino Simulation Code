@@ -1,0 +1,43 @@
+
+   #include <Arduino.h>
+   #include <SoftwareSerial.h>
+
+   SoftwareSerial SoftSerial(16, 17);
+
+   void setup() 
+   {
+     Serial.begin(9600);
+     SoftSerial.begin(115200); 
+   }
+
+   void loop() {
+  // Check if the serial port has any data available
+  if (SoftSerial.available()) {
+    // Read the voltage data from the JK-BMS
+    char voltageData = SoftSerial.read();
+
+    // Convert the voltage data to a number
+    int voltage = voltageData - '0';
+    
+
+    // Read the current data from the JK-BMS
+    char currentData = SoftSerial.read();
+
+    // Convert the current data to a number
+    int current = currentData - '0';
+    
+
+    // Read the temperature data from the JK-BMS
+    char temperatureData = SoftSerial.read();
+
+    // Convert the temperature data to a number
+    int temperature = temperatureData - '0';
+  
+
+
+    // Print the voltage, current, and temperature to the Serial Monitor
+    Serial.println(voltage);
+    Serial.println(current);
+    Serial.println(temperature);
+  }
+}
