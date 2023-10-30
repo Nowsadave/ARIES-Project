@@ -1,0 +1,43 @@
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial SoftSerial(16, 17);
+
+const byte START_BYTE = 0xAA;
+const byte STOP_BYTE = 0xBB;
+
+void setup() {
+    Serial.begin(9600);
+    SoftSerial.begin(115200); 
+}
+
+void loop() {
+    if (SoftSerial.available()) {
+        // Look for the start byte
+        if (SoftSerial.read() == START_BYTE) {
+            // Check if there are enough bytes available for a full packet
+            if (SoftSerial.available() >= 4) { // 3 data bytes + 1 stop byte
+                // Read data bytes
+                char voltageData = SoftSerial.read();
+                char currentData = SoftSerial.read();
+                char temperatureData = SoftSerial.read();
+
+                // Check for the stop byte to validate
+                if (SoftSerial.read() == STOP_BYTE) {
+                    int voltage = voltageData - '0';
+                    int current = currentData - '0';
+                    int temperature = temperatureData - '0';
+
+                    // Print the voltage, current, and temperature to the Serial Monitor
+                    Serial.println(voltage);
+                    Serial.println(current);
+                    Serial.println(temperature);
+                }
+                else {
+                    // Handle error - unexpected sequence
+                    Serial.println("Error: Invalid data sequence");
+                }
+            }
+        }
+    }
+}
